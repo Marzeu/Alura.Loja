@@ -19,17 +19,17 @@ namespace Alura.Loja.Testes.ConsoleApp
             promocaoDePascoa.DataInicio = DateTime.Now;
             promocaoDePascoa.DataTermino = DateTime.Now.AddMonths(3);
 
-            promocaoDePascoa.Produtos.Add(new Produto());
-            promocaoDePascoa.Produtos.Add(new Produto());
-            promocaoDePascoa.Produtos.Add(new Produto());
+            //promocaoDePascoa.Produtos.Add(new Produto());
+            //promocaoDePascoa.Produtos.Add(new Produto());
+            //promocaoDePascoa.Produtos.Add(new Produto());
 
             using (var contexto = new LojaContext())
             {
                 var serviceProvider = contexto.GetInfrastructure<IServiceProvider>();
                 var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
-                loggerFactory.AddProvider(SqlLoggerProvider.Create());               
+                loggerFactory.AddProvider(SqlLoggerProvider.Create());
             }
-            
+
             Console.ReadLine();
         }
         private static void ExibeEntries(IEnumerable<EntityEntry> entries)
