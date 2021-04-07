@@ -29,10 +29,15 @@ namespace Alura.Loja.Testes.ConsoleApp
                 Console.WriteLine($"Endereço de entrega: {cliente.EnderecoDeEntrega.Logradouro}");
 
                 var produto = contexto
-                    .Produtos
-                    .Include(p => p.Compras)
+                    .Produtos                    
                     .Where(p => p.Id == 1002)
                     .FirstOrDefault();
+
+                contexto.Entry(produto)
+                    .Collection(p => p.Compras)
+                    .Query()
+                    .Where(c => c.Preco > 10)
+                    .Load();
 
                 Console.WriteLine($"Mostrando as compras do produto {produto.Nome}");
                 foreach (var item in produto.Compras)
