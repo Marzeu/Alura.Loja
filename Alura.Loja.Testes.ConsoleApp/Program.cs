@@ -14,6 +14,56 @@ namespace Alura.Loja.Testes.ConsoleApp
     {
         static void Main(string[] args)
         {
+            using (var contexto2 = new LojaContext())
+            {
+                var serviceProvider = contexto2.GetInfrastructure<IServiceProvider>();
+                var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+                loggerFactory.AddProvider(SqlLoggerProvider.Create());
+
+                var promocao = contexto2.Promocoes.FirstOrDefault();
+                Console.WriteLine("\nMotrando os produtos da promoção...");
+                foreach (var item in promocao.Produtos)
+                {
+                    Console.WriteLine(item.Produto);
+                }
+            }
+
+            Console.ReadLine();
+        }
+
+        private static void IncluirPromocao()
+        {
+            using (var contexto = new LojaContext())
+            {
+                var serviceProvider = contexto.GetInfrastructure<IServiceProvider>();
+                var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+                loggerFactory.AddProvider(SqlLoggerProvider.Create());
+
+                var promocao = new Promocao();
+                promocao.Descricao = "Queima Total Janeiro 2017";
+                promocao.DataInicio = new DateTime(2017, 1, 1);
+                promocao.DataTermino = new DateTime(2017, 1, 31);
+
+                var produtos = contexto
+                    .Produtos
+                    .Where(p => p.Categoria == "Bebidas")
+                    .ToList();
+
+                foreach (var item in produtos)
+                {
+                    promocao.IncluirProduto(item);
+                }
+
+                contexto.Promocoes.Add(promocao);
+                ExibeEntries(contexto.ChangeTracker.Entries());
+
+                contexto.SaveChanges();
+
+            }
+        }
+
+        private static void UmParaUm()
+        {
             var fulano = new Cliente();
             fulano.Nome = "Fulaninho de tal";
             fulano.EnderecoDeEntrega = new Endereco()
@@ -34,9 +84,8 @@ namespace Alura.Loja.Testes.ConsoleApp
                 contexto.Clientes.Add(fulano);
                 contexto.SaveChanges();
             }
-
-            Console.ReadLine();
         }
+
         private static void MuitosParaMauitos()
         {
             var p1 = new Produto() { Nome = "Suco de Laranja", Categoria = "Bebidas", PrecoUnitario = 8.79, Unidade = "Litros" };
